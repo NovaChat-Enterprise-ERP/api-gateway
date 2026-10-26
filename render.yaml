@@ -36,7 +36,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
@@ -55,7 +55,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
@@ -73,7 +73,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
@@ -109,7 +109,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
@@ -130,7 +130,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
@@ -149,7 +149,7 @@ services:
     region: ohio
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
+    dockerCommand: node --import ./dist/db/migrate.js dist/server.js
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
