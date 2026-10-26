@@ -32,3 +32,12 @@ pnpm dev
 ```sh
 docker build --secret id=npmrc,src=$HOME/.npmrc -t novachat/api-gateway .
 ```
+
+## Deploying to Render
+
+[`render.yaml`](render.yaml) is the Blueprint for the whole backend: the gateway as a public web service and the seven services as private services, each built from its own repo. Before applying it, create two environment groups in the Render dashboard:
+
+- `novachat-shared`: `INTERNAL_SECRET`, `REDIS_URL`, `PUBLIC_APP_URL`, and a secret file named `npmrc` containing `//npm.pkg.github.com/:_authToken=<token>`
+- `novachat-db`: `DATABASE_URL`, `DATABASE_URL_DIRECT`
+
+Then create a Blueprint from this repo. Migrations run as each service's pre-deploy command.
