@@ -1,7 +1,8 @@
 services:
   - type: web
-    name: api-gateway
+    name: novachat-api-gateway
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/api-gateway
     branch: main
     region: ohio
@@ -12,152 +13,150 @@ services:
       - key: PORT
         value: 4000
       - key: AUTH_SERVICE_URL
-        fromService: { type: pserv, name: auth-service, property: hostport }
+        value: https://novachat-auth-service.onrender.com
       - key: WORKSPACE_SERVICE_URL
-        fromService: { type: pserv, name: workspace-service, property: hostport }
+        value: https://novachat-workspace-service.onrender.com
       - key: MESSAGE_SERVICE_URL
-        fromService: { type: pserv, name: message-service, property: hostport }
+        value: https://novachat-message-service.onrender.com
       - key: REALTIME_SERVICE_URL
-        fromService: { type: pserv, name: realtime-service, property: hostport }
+        value: https://novachat-realtime-service.onrender.com
       - key: FILE_SERVICE_URL
-        fromService: { type: pserv, name: file-service, property: hostport }
+        value: https://novachat-file-service.onrender.com
       - key: CALL_SERVICE_URL
-        fromService: { type: pserv, name: call-service, property: hostport }
+        value: https://novachat-call-service.onrender.com
       - key: NOTIFICATION_SERVICE_URL
-        fromService: { type: pserv, name: notification-service, property: hostport }
+        value: https://novachat-notification-service.onrender.com
 
-  - type: pserv
-    name: auth-service
+  - type: web
+    name: novachat-auth-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/auth-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
+      - fromGroup: novachat-google
       - key: PORT
         value: 4001
       - key: BETTER_AUTH_SECRET
         generateValue: true
-      - key: GOOGLE_CLIENT_ID
-        sync: false
-      - key: GOOGLE_CLIENT_SECRET
-        sync: false
 
-  - type: pserv
-    name: workspace-service
+  - type: web
+    name: novachat-workspace-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/workspace-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
       - key: PORT
         value: 4002
       - key: AUTH_SERVICE_URL
-        fromService: { type: pserv, name: auth-service, property: hostport }
+        value: https://novachat-auth-service.onrender.com
 
-  - type: pserv
-    name: message-service
+  - type: web
+    name: novachat-message-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/message-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
       - key: PORT
         value: 4003
       - key: WORKSPACE_SERVICE_URL
-        fromService: { type: pserv, name: workspace-service, property: hostport }
+        value: https://novachat-workspace-service.onrender.com
 
-  - type: pserv
-    name: realtime-service
+  - type: web
+    name: novachat-realtime-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/realtime-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
     envVars:
       - fromGroup: novachat-shared
       - key: PORT
         value: 4004
       - key: WORKSPACE_SERVICE_URL
-        fromService: { type: pserv, name: workspace-service, property: hostport }
+        value: https://novachat-workspace-service.onrender.com
       - key: MESSAGE_SERVICE_URL
-        fromService: { type: pserv, name: message-service, property: hostport }
+        value: https://novachat-message-service.onrender.com
 
-  - type: pserv
-    name: file-service
+  - type: web
+    name: novachat-file-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/file-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
+      - fromGroup: novachat-storage
       - key: PORT
         value: 4005
       - key: MESSAGE_SERVICE_URL
-        fromService: { type: pserv, name: message-service, property: hostport }
-      - key: AWS_ENDPOINT_URL_S3
-        sync: false
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
+        value: https://novachat-message-service.onrender.com
       - key: AWS_REGION
         value: us-east-2
-      - key: FILES_BUCKET
-        sync: false
 
-  - type: pserv
-    name: call-service
+  - type: web
+    name: novachat-call-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/call-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
+      - fromGroup: novachat-livekit
       - key: PORT
         value: 4006
       - key: MESSAGE_SERVICE_URL
-        fromService: { type: pserv, name: message-service, property: hostport }
-      - key: LIVEKIT_URL
-        sync: false
-      - key: LIVEKIT_API_KEY
-        sync: false
-      - key: LIVEKIT_API_SECRET
-        sync: false
+        value: https://novachat-message-service.onrender.com
 
-  - type: pserv
-    name: notification-service
+  - type: web
+    name: novachat-notification-service
     runtime: docker
+    plan: free
     repo: https://github.com/NovaChat-Enterprise-ERP/notification-service
     branch: main
     region: ohio
+    healthCheckPath: /health
     autoDeployTrigger: checksPass
-    preDeployCommand: node dist/db/migrate.js
+    dockerCommand: sh -c "node dist/db/migrate.js && exec node dist/server.js"
     envVars:
       - fromGroup: novachat-shared
       - fromGroup: novachat-db
+      - fromGroup: novachat-resend
       - key: PORT
         value: 4007
       - key: WORKSPACE_SERVICE_URL
-        fromService: { type: pserv, name: workspace-service, property: hostport }
+        value: https://novachat-workspace-service.onrender.com
       - key: MESSAGE_SERVICE_URL
-        fromService: { type: pserv, name: message-service, property: hostport }
-      - key: RESEND_API_KEY
-        sync: false
+        value: https://novachat-message-service.onrender.com
